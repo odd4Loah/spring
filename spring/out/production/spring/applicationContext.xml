@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+   http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/aop
+   http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+   http://www.springframework.org/schema/tx
+   http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <bean id="dao" class="com.how2java.dao.impl.BookDaoImpl">
+        <property name="jdbcTemplate" ref="myJDBCTemplate"/>
+    </bean>
+
+    <bean id="service" class="com.how2java.service.Impl.BookServiceImpl">
+        <property name="dao" ref="dao"/>
+    </bean>
+
+    <!-- 配置连接池 Spring 内置的 -->
+    <bean id="dateSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!-- *****注册Jdbc属性文件***** -->
+    <!-- 方式一: PropertyPlaceholderConfigurer -->
+    <!--<bean class="org.springframework.beans.factory.config.PlaceholderConfigurerSupport">-->
+        <!--<property name="location" value="classpath:jdbc.properties"/>-->
+    <!--</bean>-->
+
+    <!-- 方式二： -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <!-- ********注册jdbcTemplate********* -->
+    <bean id="myJDBCTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dateSource"/>
+    </bean>
+
+
+
+
+
+
+<!--1-->
+    <!--<context:annotation-config/>-->
+    <!--<bean name="c" class="com.how2java.pojo.Category">-->
+        <!--<property name="name" value="category 1" />-->
+    <!--</bean>-->
+
+    <!--<bean name="p" class="com.how2java.pojo.Product">-->
+        <!--<property name="name" value="product1"/>-->
+        <!--&lt;!&ndash;<property name="category" ref="c"/>&ndash;&gt;-->
+    <!--</bean>-->
+
+<!--2-->
+    <!--<context:component-scan base-package="com.how2java.pojo"/>&lt;!&ndash; 对pojo包进行扫描 &ndash;&gt;-->
+
+    <!--&lt;!&ndash;声明业务对象&ndash;&gt;-->
+    <!--<bean name="s" class="com.how2java.service.ProductService">-->
+    <!--</bean>-->
+    <!--&lt;!&ndash;声明日志切面&ndash;&gt;-->
+    <!--<bean id="loggerAspect" class="com.how2java.aspect.LoggerAspect"/>-->
+
+    <!--<aop:config>-->
+        <!--&lt;!&ndash;指定核心业务功能&ndash;&gt;-->
+        <!--<aop:pointcut id="loggerCutpoint" expression="execution(* com.how2java.service.ProductService.*(..))"/>-->
+        <!--&lt;!&ndash;指定辅助业务功能&ndash;&gt;-->
+        <!--<aop:aspect id="logAspect" ref="loggerAspect">-->
+            <!--<aop:around method="log" pointcut-ref="loggerCutpoint"/>-->
+        <!--</aop:aspect>-->
+    <!--</aop:config>-->
+
+<!--3-->
+    <!--扫描包com.how2java.aspect和com.how2java.service，定位业务类和切面类-->
+    <!--<context:component-scan base-package="com.how2java.aspect"/>&lt;!&ndash; 对aspect包进行扫描 &ndash;&gt;-->
+    <!--<context:component-scan base-package="com.how2java.service"/>&lt;!&ndash; 对service包进行扫描 &ndash;&gt;-->
+
+    <!--找到被注解了的切面类，进行切面配置-->
+    <!--Spring为了支撑AOP运行，用到了动态代理这种设计模式，这句话的意思就是启动对AOP的支持。-->
+    <!--<aop:aspectj-autoproxy/>-->
+
+
+
+</beans>
